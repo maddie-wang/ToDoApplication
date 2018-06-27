@@ -1,5 +1,6 @@
 package me.maddie_wang.todoapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+    private static final String FILE_NAME = "todo.txt"; // where our items will be stored in
+    public static final int EDIT_REQUEST_CODE = 20; // identity edit activity code
+    public static final String ITEM_TEXT = "itemText"; // to pass data between activities
+    public static final String ITEM_POSITION = "itemPosition";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         etNewItem.setText(""); // clear txtbox
         Toast.makeText(getApplicationContext(), "Item added to the list", Toast.LENGTH_SHORT).show();
     }
-    // functionality for removing an item
+    // functionality for removing an item (long click) + editing an item (single click)
     private void setupListViewListener() {
-        // set ListView's itemLongClickListener
+        // set ListView's itemLongClickListener (removing item)
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -59,10 +64,37 @@ public class MainActivity extends AppCompatActivity {
                 return true; // to tell framework long click was consumed
             }
         });
+
+        // set ListView's itemClickListener (edit item)
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // first parameter = context, second is class of activity to launch
+                Intent i = new Intent(MainActivity.this, EditItemActivity.class);
+                i.putExtra(ITEM_TEXT, items.get(position)); // communicates with other class w/
+                i.putExtra(ITEM_POSITION, position); // position and text
+                startActivityForResult(i, EDIT_REQUEST_CODE); // brings up edit activity
+
+            }
+        });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == EDIT_REQUEST_CODE) { // got request+response
+            String updatedItem = data.getExtras().getString(ITEM_TEXT); // grab updated text
+            int position = data.getExtras().getInt(ITEM_POSITION, 0); // get pos of item
+            items.set(position, updatedItem); // update item w/ updated text
+            itemsAdapter.notifyDataSetChanged(); // notify data was changed
+            writeItems(); // write changes to file
+            Toast.makeText(this, "Item updated", Toast.LENGTH_SHORT).show(); // notifies user
+        }
+    }
+
     // return file which the data is stored in (implements persistence)
     private File getDataFile() {
-        return new File(getFilesDir(), "todo.txt");
+        return new File(getFilesDir(), FILE_NAME);
     }
 
     // read items from the file system (implements persistence)
