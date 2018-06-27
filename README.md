@@ -25,6 +25,7 @@ hi
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
+
 ![Walkthrough](walkthrough.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
@@ -32,6 +33,10 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+
+* Understanding how adapters work in android -- how they link data structures to actual UI objects
+* Implementing persistence: Understanding when to call read and call write
+* Understanding the syntax of listeners
 
 ## License
 
