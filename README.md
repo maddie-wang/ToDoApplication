@@ -37,6 +37,8 @@ Describe any challenges encountered while building the app.
 * Understanding how adapters work in android -- how they link data structures to actual UI objects
 * Implementing persistence: Understanding when to call read and call write
 * Understanding the syntax of listeners
+* Working with intents and multiple activities. Learning how the "mailboxes" can be used to
+communicate between two activities
 
 ## License
 
